@@ -528,9 +528,15 @@ class PoseHighResolutionNet(nn.Module):
 
         # Upsampling
         x0_h, x0_w = x[0].size(2), x[0].size(3)
-        x1 = F.upsample(x[1], size=(x0_h, x0_w), mode="bilinear")
-        x2 = F.upsample(x[2], size=(x0_h, x0_w), mode="bilinear")
-        x3 = F.upsample(x[3], size=(x0_h, x0_w), mode="bilinear")
+        x1 = F.interpolate(
+            x[1], size=(x0_h, x0_w), mode="bilinear", align_corners=False
+        )
+        x2 = F.interpolate(
+            x[2], size=(x0_h, x0_w), mode="bilinear", align_corners=False
+        )
+        x3 = F.interpolate(
+            x[3], size=(x0_h, x0_w), mode="bilinear", align_corners=False
+        )
 
         x = torch.cat([x[0], x1, x2, x3], 1)
 
@@ -556,7 +562,7 @@ class PoseHighResolutionNet(nn.Module):
             self.load_state_dict(need_init_state_dict, strict=False)
         elif pretrained:
             logger.error("=> please download pre-trained models first!")
-            raise ValueError("{} is not exist!".format(pretrained))
+            raise ValueError("{} does not exist!".format(pretrained))
 
 
 def fill_fc_weights(layers):
